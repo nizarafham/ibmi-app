@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:bmi_calculator/widgets/info_card.dart';
-import 'package:bmi_calculator/pages/result_page.dart';
+import 'package:ibmi_app/widgets/info_card.dart';
+import 'package:ibmi_app/pages/result_page.dart';
 
 enum Gender { male, female }
 
@@ -65,11 +65,12 @@ class _BmiPageState extends State<BmiPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ResultPage(
-            bmiResult: bmiResult,
-            resultText: status,
-            interpretation: 'Hasil perhitungan IBMI Anda.',
-          ),
+          builder:
+              (context) => ResultPage(
+                bmiResult: bmiResult,
+                resultText: status,
+                interpretation: 'Hasil perhitungan IBMI Anda.',
+              ),
         ),
       );
     }
@@ -87,7 +88,10 @@ class _BmiPageState extends State<BmiPage> {
               Expanded(
                 child: InfoCard(
                   onTap: () => setState(() => selectedGender = Gender.male),
-                  color: selectedGender == Gender.male ? activeCardColor : inactiveCardColor,
+                  color:
+                      selectedGender == Gender.male
+                          ? activeCardColor
+                          : inactiveCardColor,
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [Icon(Icons.male, size: 80.0), Text('PRIA')],
@@ -97,7 +101,10 @@ class _BmiPageState extends State<BmiPage> {
               Expanded(
                 child: InfoCard(
                   onTap: () => setState(() => selectedGender = Gender.female),
-                  color: selectedGender == Gender.female ? activeCardColor : inactiveCardColor,
+                  color:
+                      selectedGender == Gender.female
+                          ? activeCardColor
+                          : inactiveCardColor,
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [Icon(Icons.female, size: 80.0), Text('WANITA')],
@@ -113,14 +120,29 @@ class _BmiPageState extends State<BmiPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('TINGGI BADAN', style: TextStyle(fontSize: 18.0, color: Color(0xFF8D8E98))),
+                const Text(
+                  'TINGGI BADAN',
+                  style: TextStyle(fontSize: 18.0, color: Color(0xFF8D8E98)),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Text(height.toString(), style: const TextStyle(fontSize: 50.0, fontWeight: FontWeight.w900)),
-                    const Text('cm', style: TextStyle(fontSize: 18.0, color: Color(0xFF8D8E98))),
+                    Text(
+                      height.toString(),
+                      style: const TextStyle(
+                        fontSize: 50.0,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const Text(
+                      'cm',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Color(0xFF8D8E98),
+                      ),
+                    ),
                   ],
                 ),
                 Slider(
@@ -146,8 +168,20 @@ class _BmiPageState extends State<BmiPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('BERAT BADAN', style: TextStyle(fontSize: 18.0, color: Color(0xFF8D8E98))),
-                      Text(weight.toString(), style: const TextStyle(fontSize: 50.0, fontWeight: FontWeight.w900)),
+                      const Text(
+                        'BERAT BADAN',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Color(0xFF8D8E98),
+                        ),
+                      ),
+                      Text(
+                        weight.toString(),
+                        style: const TextStyle(
+                          fontSize: 50.0,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -155,7 +189,10 @@ class _BmiPageState extends State<BmiPage> {
                             onPressed: () => setState(() => weight--),
                             backgroundColor: const Color(0xFF4C4F5E),
                             mini: true,
-                            child: const Icon(Icons.remove, color: Colors.white),
+                            child: const Icon(
+                              Icons.remove,
+                              color: Colors.white,
+                            ),
                           ),
                           const SizedBox(width: 10.0),
                           FloatingActionButton(
@@ -165,7 +202,7 @@ class _BmiPageState extends State<BmiPage> {
                             child: const Icon(Icons.add, color: Colors.white),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -175,8 +212,20 @@ class _BmiPageState extends State<BmiPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('UMUR', style: TextStyle(fontSize: 18.0, color: Color(0xFF8D8E98))),
-                      Text(age.toString(), style: const TextStyle(fontSize: 50.0, fontWeight: FontWeight.w900)),
+                      const Text(
+                        'UMUR',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Color(0xFF8D8E98),
+                        ),
+                      ),
+                      Text(
+                        age.toString(),
+                        style: const TextStyle(
+                          fontSize: 50.0,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -184,7 +233,10 @@ class _BmiPageState extends State<BmiPage> {
                             onPressed: () => setState(() => age--),
                             backgroundColor: const Color(0xFF4C4F5E),
                             mini: true,
-                            child: const Icon(Icons.remove, color: Colors.white),
+                            child: const Icon(
+                              Icons.remove,
+                              color: Colors.white,
+                            ),
                           ),
                           const SizedBox(width: 10.0),
                           FloatingActionButton(
@@ -194,7 +246,7 @@ class _BmiPageState extends State<BmiPage> {
                             child: const Icon(Icons.add, color: Colors.white),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -224,11 +276,15 @@ class _BmiPageState extends State<BmiPage> {
             child: const Center(
               child: Text(
                 'CALCULATE',
-                style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }
