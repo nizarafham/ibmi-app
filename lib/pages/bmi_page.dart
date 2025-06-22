@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 import 'dart:math';
 
@@ -22,9 +23,10 @@ class _BmiPageState extends State<BmiPage> {
   int weight = 60;
   int age = 25;
 
-  // Warna Kartu
-  final Color activeCardColor = const Color(0xFF1D1E33);
-  final Color inactiveCardColor = const Color(0xFF111328);
+  final Color activeContentColor = Colors.blue;
+  final Color inactiveContentColor = Colors.grey;
+  final TextStyle labelTextStyle = TextStyle(fontSize: 18.0, color: Colors.grey[600]);
+  final TextStyle numberTextStyle = const TextStyle(fontSize: 50.0, fontWeight: FontWeight.w900, color: Colors.black87);
 
   Future<void> _calculateAndSaveBmi() async {
     // 1. Hitung BMI
@@ -34,13 +36,13 @@ class _BmiPageState extends State<BmiPage> {
 
     String status;
     if (bmi < 18.5) {
-      status = 'Kekurangan berat badan';
+      status = 'Weight loss';
     } else if (bmi < 25) {
       status = 'Normal (ideal)';
     } else if (bmi < 30) {
-      status = 'Kelebihan berat badan';
+      status = 'Overweight';
     } else {
-      status = 'Kegemukan (Obesitas)';
+      status = 'Overweight (Obesity)';
     }
 
     // 2. Simpan ke SharedPreferences
@@ -51,7 +53,7 @@ class _BmiPageState extends State<BmiPage> {
       'date': DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now()),
       'bmi': bmiResult,
       'status': status,
-      'gender': selectedGender == Gender.male ? 'Pria' : 'Wanita',
+      'gender': selectedGender == Gender.male ? 'Male' : 'Female',
       'age': age.toString(),
       'weight': weight.toString(),
       'height': height.toString(),
@@ -65,12 +67,11 @@ class _BmiPageState extends State<BmiPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder:
-              (context) => ResultPage(
-                bmiResult: bmiResult,
-                resultText: status,
-                interpretation: 'Hasil perhitungan IBMI Anda.',
-              ),
+          builder: (context) => ResultPage(
+            bmiResult: bmiResult,
+            resultText: status,
+            interpretation: 'The result of your IBMI calculation.',
+          ),
         ),
       );
     }
@@ -81,76 +82,28 @@ class _BmiPageState extends State<BmiPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // GENDER CARDS
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                child: InfoCard(
-                  onTap: () => setState(() => selectedGender = Gender.male),
-                  color:
-                      selectedGender == Gender.male
-                          ? activeCardColor
-                          : inactiveCardColor,
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Icon(Icons.male, size: 80.0), Text('PRIA')],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InfoCard(
-                  onTap: () => setState(() => selectedGender = Gender.female),
-                  color:
-                      selectedGender == Gender.female
-                          ? activeCardColor
-                          : inactiveCardColor,
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Icon(Icons.female, size: 80.0), Text('WANITA')],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
         // HEIGHT SLIDER
         Expanded(
           child: InfoCard(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'TINGGI BADAN',
-                  style: TextStyle(fontSize: 18.0, color: Color(0xFF8D8E98)),
-                ),
+                Text('Height', style: labelTextStyle),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
-                    Text(
-                      height.toString(),
-                      style: const TextStyle(
-                        fontSize: 50.0,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const Text(
-                      'cm',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Color(0xFF8D8E98),
-                      ),
-                    ),
+                    Text(height.toString(), style: numberTextStyle),
+                    Text('cm', style: labelTextStyle),
                   ],
                 ),
                 Slider(
                   value: height.toDouble(),
                   min: 120.0,
                   max: 220.0,
-                  activeColor: Colors.pink,
-                  inactiveColor: const Color(0xFF8D8E98),
+                  activeColor: Colors.blue,
+                  inactiveColor: Colors.blue[100],
                   onChanged: (double newValue) {
                     setState(() => height = newValue.round());
                   },
@@ -164,128 +117,122 @@ class _BmiPageState extends State<BmiPage> {
           child: Row(
             children: [
               Expanded(
-                child: InfoCard(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'BERAT BADAN',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Color(0xFF8D8E98),
-                        ),
-                      ),
-                      Text(
-                        weight.toString(),
-                        style: const TextStyle(
-                          fontSize: 50.0,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FloatingActionButton(
-                            onPressed: () => setState(() => weight--),
-                            backgroundColor: const Color(0xFF4C4F5E),
-                            mini: true,
-                            child: const Icon(
-                              Icons.remove,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 10.0),
-                          FloatingActionButton(
-                            onPressed: () => setState(() => weight++),
-                            backgroundColor: const Color(0xFF4C4F5E),
-                            mini: true,
-                            child: const Icon(Icons.add, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                child: _buildValueSelectorCard(
+                  'Weight (kg)',
+                  weight,
+                  () => setState(() => weight--),
+                  () => setState(() => weight++),
                 ),
               ),
               Expanded(
-                child: InfoCard(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'UMUR',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Color(0xFF8D8E98),
-                        ),
-                      ),
-                      Text(
-                        age.toString(),
-                        style: const TextStyle(
-                          fontSize: 50.0,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FloatingActionButton(
-                            onPressed: () => setState(() => age--),
-                            backgroundColor: const Color(0xFF4C4F5E),
-                            mini: true,
-                            child: const Icon(
-                              Icons.remove,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 10.0),
-                          FloatingActionButton(
-                            onPressed: () => setState(() => age++),
-                            backgroundColor: const Color(0xFF4C4F5E),
-                            mini: true,
-                            child: const Icon(Icons.add, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                child: _buildValueSelectorCard(
+                  'Age (yr)',
+                  age,
+                  () => setState(() => age--),
+                  () => setState(() => age++),
                 ),
               ),
             ],
           ),
         ),
-        // CALCULATE BUTTON
-        GestureDetector(
-          onTap: () {
-            if (selectedGender != null) {
-              _calculateAndSaveBmi();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Silakan pilih gender terlebih dahulu.'),
-                  backgroundColor: Colors.red,
+        // GENDER TOGGLE
+        Expanded(
+          child: InfoCard(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('GENDER', style: labelTextStyle),
+                const SizedBox(height: 20),
+                CupertinoSlidingSegmentedControl<Gender>(
+                  groupValue: selectedGender,
+                  thumbColor: Colors.blue,
+                  backgroundColor: Colors.blue[100]!,
+                  onValueChanged: (Gender? value) {
+                    setState(() {
+                      selectedGender = value;
+                    });
+                  },
+                  children: const {
+                    Gender.male: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text('Male', style: TextStyle(fontSize: 16)),
+                    ),
+                    Gender.female: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text('Female', style: TextStyle(fontSize: 16)),
+                    ),
+                  },
                 ),
-              );
-            }
-          },
-          child: Container(
-            color: Colors.pink,
-            margin: const EdgeInsets.only(top: 10.0),
-            width: double.infinity,
-            height: 60.0,
-            child: const Center(
-              child: Text(
-                'CALCULATE',
-                style: TextStyle(
-                  fontSize: 25.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+              ],
             ),
           ),
         ),
+        // CALCULATE BUTTON
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 16.0),
+          child: Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * (2 / 3),
+              height: 55,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (selectedGender != null) {
+                    _calculateAndSaveBmi();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Silakan pilih gender terlebih dahulu.'),
+                        backgroundColor: Colors.redAccent,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  elevation: 5,
+                ),
+                child: const Text('CALCULATE', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ),
+        )
       ],
     );
   }
+
+  Widget _buildValueSelectorCard(String label, int value, VoidCallback onDecrement, VoidCallback onIncrement) {
+    return InfoCard(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(label, style: labelTextStyle),
+          Text(value.toString(), style: numberTextStyle),
+          const SizedBox(height: 0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove_circle_outline),
+                color: Colors.grey[700],
+                iconSize: 30.0,
+                onPressed: onDecrement,
+              ),
+              const SizedBox(width: 10.0), 
+              IconButton(
+                icon: const Icon(Icons.add_circle_outline),
+                color: Colors.blue, 
+                iconSize: 30.0, 
+                onPressed: onIncrement,
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 }
+

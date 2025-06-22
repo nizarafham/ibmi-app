@@ -16,7 +16,10 @@ class ResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HASIL IBMI'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('IBMI'),
+        centerTitle: true,
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -26,8 +29,8 @@ class ResultPage extends StatelessWidget {
               padding: const EdgeInsets.all(15.0),
               alignment: Alignment.bottomLeft,
               child: const Text(
-                'Hasil Anda',
-                style: TextStyle(fontSize: 50.0, fontWeight: FontWeight.bold),
+                'Your results',
+                style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
             ),
           ),
@@ -41,38 +44,40 @@ class ResultPage extends StatelessWidget {
                   Text(
                     resultText.toUpperCase(),
                     style: const TextStyle(
-                      color: Color(0xFF24D876),
+                      color: Colors.green, 
                       fontSize: 22.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    bmiResult,
-                    style: const TextStyle(
-                      fontSize: 100.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    bmiResult, 
+                    style: const TextStyle(fontSize: 100.0, fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                   Text(
                     interpretation,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 22.0),
+                    textAlign: TextAlign.center, 
+                    style: TextStyle(fontSize: 22.0, color: Colors.grey[800]),
                   ),
                 ],
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              color: Colors.pink,
-              margin: const EdgeInsets.only(top: 10.0),
-              width: double.infinity,
-              height: 60.0,
-              child: const Center(
-                child: Text(
-                  'RE-CALCULATE',
-                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * (2 / 3),
+                height: 55,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  child: const Text('RE-CALCULATE', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
                 ),
               ),
             ),

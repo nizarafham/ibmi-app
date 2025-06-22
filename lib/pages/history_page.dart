@@ -24,7 +24,6 @@ class _HistoryPageState extends State<HistoryPage> {
     final prefs = await SharedPreferences.getInstance();
     final historyStringList = prefs.getStringList('bmiHistory') ?? [];
     
-    // Reverse list agar data terbaru di atas
     final loadedHistory = historyStringList
         .map((item) => jsonDecode(item) as Map<String, dynamic>)
         .toList().reversed.toList();
@@ -38,7 +37,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Future<void> _clearHistory() async {
      final prefs = await SharedPreferences.getInstance();
      await prefs.remove('bmiHistory');
-     _loadHistory(); // Reload untuk menampilkan list kosong
+     _loadHistory(); 
   }
 
   @override
@@ -48,39 +47,67 @@ class _HistoryPageState extends State<HistoryPage> {
         onPressed: _clearHistory,
         icon: const Icon(Icons.delete_forever),
         label: const Text("Clear History"),
-        backgroundColor: Colors.pink,
+        backgroundColor: Colors.blue, 
+        foregroundColor: Colors.white,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _history.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Belum ada riwayat perhitungan.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
+      body: RefreshIndicator(
+        onRefresh: _loadHistory, 
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _history.isEmpty
+                ? const Center(
+                    child: Text('There is no calculation history yet.', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                  )
+                : ListView.builder(
+                    itemCount: _history.length,
+                    padding: const EdgeInsets.all(8.0),
+                    itemBuilder: (context, index) {
+                      final item = _history[index];
+                      return Card(
+                        elevation: 5,
+                        color: Colors.white,
+                        shadowColor: Colors.blue.withOpacity(0.15),
+                        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'BMI: ${item['bmi']} - ${item['status']}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${item['date']}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '${item['gender']}, ${item['age']} y.o, ${item['weight']} kg, ${item['height']} cm',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+
+                    },
                   ),
-                )
-              : ListView.builder(
-                  itemCount: _history.length,
-                  padding: const EdgeInsets.all(8.0),
-                  itemBuilder: (context, index) {
-                    final item = _history[index];
-                    return Card(
-                      color: const Color(0xFF1D1E33),
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        title: Text(
-                          'BMI: ${item['bmi']} - ${item['status']}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          '${item['date']}\n${item['gender']}, ${item['age']} thn, ${item['weight']} kg, ${item['height']} cm',
-                          style: TextStyle(color: Colors.grey[400]),
-                        ),
-                        isThreeLine: true,
-                      ),
-                    );
-                  },
-                ),
+      ),
     );
   }
 }
